@@ -1,24 +1,23 @@
 import { GoogleGenAI } from "@google/genai";
 
-export async function generateLogo(prompt: string, size: "1K" | "2K" | "4K") {
-  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error("API key not found");
-  
-  const ai = new GoogleGenAI({ apiKey });
+export const getAI = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is required");
+  }
+  return new GoogleGenAI({ apiKey });
+};
+
+export async function generateLogo(prompt: string) {
+  const ai = getAI();
   const response = await ai.models.generateContent({
-    model: "gemini-3-pro-image-preview",
+    model: "gemini-2.5-flash-image",
     contents: {
       parts: [
         {
-          text: `Create a professional, modern, and high-quality company logo based on this description: ${prompt}. The logo should be clean, iconic, and suitable for a brand identity.`,
+          text: `Create a professional, modern, and high-quality company logo based on this description: ${prompt}. The logo should be clean, iconic, and suitable for a brand identity. White background.`,
         },
       ],
-    },
-    config: {
-      imageConfig: {
-        aspectRatio: "1:1",
-        imageSize: size,
-      },
     },
   });
 
@@ -30,43 +29,21 @@ export async function generateLogo(prompt: string, size: "1K" | "2K" | "4K") {
   throw new Error("No image generated");
 }
 
-export async function animateLogo(imageUri: string, prompt: string, aspectRatio: "16:9" | "9:16") {
-  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error("API key not found");
-
-  const ai = new GoogleGenAI({ apiKey });
-  const base64Data = imageUri.split(",")[1];
-  const mimeType = imageUri.split(";")[0].split(":")[1];
-
-  let operation = await ai.models.generateVideos({
-    model: "veo-3.1-fast-generate-preview",
-    prompt: `Animate this logo in a professional, cinematic way. ${prompt}. Subtle motion, elegant transitions, high-end production value.`,
-    image: {
-      imageBytes: base64Data,
-      mimeType: mimeType,
-    },
+export async function findInspiration(prompt: string) {
+  const ai = getAI();
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: `Find professional logo design inspiration and existing similar brand styles for a company described as: ${prompt}. Provide a list of 5 famous brands or design styles that match this vibe, explaining why they are relevant. Include links to search results if possible.`,
     config: {
-      numberOfVideos: 1,
-      resolution: "1080p",
-      aspectRatio: aspectRatio,
+      tools: [{ googleSearch: {} }],
     },
   });
 
-  while (!operation.done) {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    operation = await ai.operations.getVideosOperation({ operation: operation });
-  }
-
-  const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-  if (!downloadLink) throw new Error("No video generated");
-
-  const response = await fetch(downloadLink, {
-    method: "GET",
-    headers: {
-      "x-goog-api-key": apiKey,
-    },
-  });
-
-  const blob = await response.blob();
-  return URL.createObjectURL(blob);
+  return {
+    text: response.text,
+    sources: response.candidates?.[0]?.groundingMetadata?.groundingChunks?.map((chunk: any) => ({
+      title: chunk.web?.title,
+      uri: chunk.web?.uri,
+    })).filter((s: any) => s.title && s.uri) || [],
+  };
 }
