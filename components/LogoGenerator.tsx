@@ -76,7 +76,7 @@ export const LogoGenerator: React.FC = () => {
                 <Textarea
                   id="description"
                   placeholder="e.g. A futuristic tech company called 'Nova' that focuses on sustainable energy..."
-                  className="min-h-[120px] resize-none focus-visible:ring-neutral-900"
+                  className="min-h-[120px] resize-none focus-visible:ring-primary"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   disabled={step !== "idle" && step !== "logo-ready"}
@@ -126,7 +126,7 @@ export const LogoGenerator: React.FC = () => {
                   <Button
                     onClick={handleGenerateLogo}
                     disabled={!description.trim() || step === "generating-logo"}
-                    className="w-full h-12 bg-neutral-900 hover:bg-neutral-800 text-white font-medium transition-all"
+                    className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-medium transition-all"
                   >
                     {step === "generating-logo" ? (
                       <>
@@ -145,7 +145,7 @@ export const LogoGenerator: React.FC = () => {
                     <Button
                       onClick={handleAnimate}
                       disabled={step === "animating" || step === "complete"}
-                      className="w-full h-12 bg-neutral-900 hover:bg-neutral-800 text-white font-medium"
+                      className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-medium"
                     >
                       {step === "animating" ? (
                         <>
@@ -225,7 +225,7 @@ export const LogoGenerator: React.FC = () => {
                   className="flex flex-col items-center gap-6"
                 >
                   <div className="relative">
-                    <div className="w-24 h-24 border-4 border-neutral-200 border-t-neutral-900 rounded-full animate-spin" />
+                    <div className="w-24 h-24 border-4 border-neutral-200 border-t-primary rounded-full animate-spin" />
                     <div className="absolute inset-0 flex items-center justify-center">
                       {step === "generating-logo" ? <ImageIcon className="w-8 h-8 text-neutral-400" /> : <Video className="w-8 h-8 text-neutral-400" />}
                     </div>

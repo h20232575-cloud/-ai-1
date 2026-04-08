@@ -46,7 +46,7 @@ export const ApiKeySelection: React.FC<ApiKeySelectionProps> = ({ onKeySelected 
     <div className="flex items-center justify-center min-h-screen bg-neutral-50 p-4">
       <Card className="w-full max-w-md border-neutral-200 shadow-xl">
         <CardHeader className="space-y-1">
-          <div className="w-12 h-12 bg-neutral-900 rounded-xl flex items-center justify-center mb-4">
+          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-4">
             <Key className="text-white w-6 h-6" />
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight">API Key Required</CardTitle>
@@ -63,7 +63,7 @@ export const ApiKeySelection: React.FC<ApiKeySelectionProps> = ({ onKeySelected 
               href="https://ai.google.dev/gemini-api/docs/billing"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center text-neutral-900 font-medium hover:underline"
+              className="flex items-center text-primary font-medium hover:underline"
             >
               Learn about billing <ExternalLink className="ml-1 w-3 h-3" />
             </a>
